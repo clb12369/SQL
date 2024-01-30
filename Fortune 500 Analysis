@@ -99,10 +99,11 @@ FROM fortune_companies
 GROUP BY industry
 ORDER BY industry_revenue DESC;
 
-# 5. This query calculated the average number of employees and showed the industry and average number of employees for those that 
+# 5. This query calculated the average revenue and showed the industry for the companies that had greater then 2,000 employees 
 #    had greater than 20000 employees
 SELECT
-ROUND(AVG(employees), 0) AS avg_employees,
+ROUND(AVG(revenue), 2) AS avg_revenue,
 industry
 FROM fortune_companies
-HAVING avg_employees > 20000;
+HAVING employees > 2000;
+

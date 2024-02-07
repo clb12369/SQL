@@ -1,0 +1,75 @@
+# This SQL project utilizes a database containing multiple tables with customer and order data
+
+# 1. How many orders were placed in January?
+
+SELECT
+COUNT(orderID)
+FROM JanSales
+WHERE length(orderid) = 6
+AND orderid <> 'Order ID';
+
+# 2. How many of those orders were for an iPhone? 
+
+SELECT
+COUNT(orderID) as iphone_sales 
+FROM BIT_DB.JanSales
+WHERE PRODUCT = 'iPhone'
+AND length(orderid) = 6
+AND orderid <> 'Order ID';
+
+# 3. What are the customer account numbers for all the orders that were placed in February. 
+
+SELECT DISTINCT
+customers.acctnum
+FROM customers
+INNER JOIN FebSales ON customers.order_id = FebSales.orderID
+WHERE length(orderid) = 6
+AND orderid <> 'Order ID';
+
+# 4. Which product was the cheapest one sold in January, and what was the price? 
+#  Two ways:
+
+SELECT
+Product,
+price
+FROM JanSales
+ORDER BY price ASC
+LIMIT 1;
+
+SELECT DISTINCT
+Product,
+price
+FROM JanSales
+WHERE price in (SELECT MIN(price) FROM JanSales);
+
+# 5. What is the total revenue for each product sold in January? 
+
+SELECT
+Product,
+SUM(Quantity) * price AS product_revenue
+FROM JanSales
+GROUP BY Product;
+
+# 6. Which products were sold in February at 548 Lincoln St, Seattle, WA 98101, how many of each and total revenue?
+
+SELECT
+Product,
+SUM(quantity) AS no_of_items,
+SUM(Quantity) * price as revenue
+FROM FebSales
+WHERE location = '548 Lincoln St, Seattle, WA 98101'
+GROUP BY Product;
+
+# 7. How many customers ordered more than 2 products at a time in February and what was the average amount spent for each? 
+
+SELECT
+COUNT(DISTINCT cust.acctnum),
+AVG(Quantity * price)
+FROM FebSales AS feb
+LEFT JOIN customers AS cust
+ON feb.orderID = cust.order_ID
+WHERE feb.Quantity > 2 
+AND length(orderid) = 6
+AND orderid <> 'Order ID'; 
+
+

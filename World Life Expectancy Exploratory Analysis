@@ -1,0 +1,158 @@
+use world_life_expectancy;
+
+-- Exploratory Data Analysis
+
+
+SELECT
+*
+FROM world_life_expectancy
+;
+
+-- What is the average life expectancy for the world
+SELECT
+ROUND(AVG(`Life expectancy`)) AS world_avg
+FROM world_life_expectancy
+;
+
+-- How has each country's life expectancy changed throughout the years
+SELECT
+Country,
+MIN(`Life expectancy`),
+MAX(`Life expectancy`)
+FROM world_life_expectancy
+GROUP BY Country
+HAVING MIN(`Life expectancy`) <> 0
+AND MAX(`Life expectancy`) <> 0
+ORDER BY Country DESC
+; 
+
+-- Which countries have made the biggest strides
+SELECT
+Country,
+MIN(`Life expectancy`),
+MAX(`Life expectancy`),
+ROUND(MAX(`Life expectancy`) - MIN(`Life expectancy`),1) AS 15_Year_Change
+FROM world_life_expectancy
+GROUP BY Country
+HAVING MIN(`Life expectancy`) <> 0
+AND MAX(`Life expectancy`) <> 0
+ORDER BY 15_Year_Change DESC
+; 
+
+-- smallest?
+SELECT
+Country,
+MIN(`Life expectancy`),
+MAX(`Life expectancy`),
+ROUND(MAX(`Life expectancy`) - MIN(`Life expectancy`),1) AS 15_Year_Change
+FROM world_life_expectancy
+GROUP BY Country
+HAVING MIN(`Life expectancy`) <> 0
+AND MAX(`Life expectancy`) <> 0
+ORDER BY 15_Year_Change ASC
+; 
+
+-- What is the average life expectancy for each year?
+SELECT
+Year,
+ROUND(AVG(`Life expectancy`),2)
+FROM world_life_expectancy
+GROUP BY Year 
+ORDER BY Year
+;
+
+-- filter out those which have life expectancies or zero
+SELECT
+Year,
+ROUND(AVG(`Life expectancy`),2)
+FROM world_life_expectancy
+WHERE `Life expectancy` <> 0
+AND `Life expectancy` <> 0
+GROUP BY Year 
+ORDER BY Year
+;
+
+SELECT
+*
+FROM world_life_expectancy
+;
+
+-- Does GDP correlate to life expectancy?
+SELECT
+Country,
+ROUND(AVG(`Life expectancy`),1) AS Life_Exp,
+ROUND(AVG(GDP),1) AS GDP
+FROM world_life_expectancy
+GROUP BY Country
+HAVING Life_Exp > 0
+AND GDP > 0
+ORDER BY GDP ASC
+;
+
+SELECT
+Country,
+ROUND(AVG(`Life expectancy`),1) AS Life_Exp,
+ROUND(AVG(GDP),1) AS GDP
+FROM world_life_expectancy
+GROUP BY Country
+HAVING Life_Exp > 0
+AND GDP > 0
+ORDER BY GDP DESC
+;
+
+-- queries can be imported into a visualization tool
+
+-- Let's make categories
+
+SELECT
+SUM(CASE WHEN GDP >= 1500 THEN 1 ELSE 0 END) AS High_GDP_Count,
+AVG(CASE WHEN GDP >= 1500 THEN `Life expectancy` ELSE NULL END) AS High_GDP_Left_Exp,
+SUM(CASE WHEN GDP <= 1500 THEN 1 ELSE 0 END) AS Low_GDP_Count,
+AVG(CASE WHEN GDP <= 1500 THEN `Life expectancy` ELSE NULL END) AS Low_GDP_Left_Exp
+FROM world_life_expectancy
+;
+
+-- How does the average life expectancy compare between DEVELOPING and DEVELOPED countries
+SELECT
+Status,
+ROUND(AVG(`Life expectancy`),1) AS Avg_Life_Exp
+FROM world_life_expectancy
+GROUP BY Status
+;
+
+-- Is the number of DEVELOPING Countries affecting the average life expectancy calculation?
+SELECT
+Status,
+COUNT(DISTINCT Country),
+ROUND(AVG(`Life expectancy`),1) AS Avg_Life_Exp
+FROM world_life_expectancy
+GROUP BY Status
+;
+
+-- How does average life expectancy correlate with BMI?
+SELECT
+Country,
+ROUND(AVG(`Life expectancy`),1) AS Avg_Life_Exp,
+ROUND(AVG(BMI),1) AS Avg_BMI
+FROM world_life_expectancy
+GROUP BY Country
+HAVING Avg_Life_Exp > 0
+AND Avg_BMI > 0
+ORDER BY Avg_BMI ASC
+;
+
+-- Adult mortality: 
+-- using rolling total to see adult mortality through the years
+-- window function
+
+SELECT
+Country,
+Year,
+`Life expectancy`,
+`Adult Mortality`,
+SUM(`Adult Mortality`) OVER(PARTITION BY Country ORDER BY Year) AS Rolling_Total
+FROM world_life_expectancy
+;
+
+-- Would be a good idea to have country populations for additional insights
+-- This EDA showed several possible errors in the data

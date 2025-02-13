@@ -8,13 +8,13 @@ SELECT
 FROM world_life_expectancy
 ;
 
--- What is the average life expectancy for the world
+-- 1. What is the average life expectancy for the world as a whole?
 SELECT
 ROUND(AVG(`Life expectancy`)) AS world_avg
 FROM world_life_expectancy
 ;
 
--- How has each country's life expectancy changed throughout the years
+-- 2. How has each country's life expectancy changed throughout the years
 SELECT
 Country,
 MIN(`Life expectancy`),
@@ -26,7 +26,7 @@ AND MAX(`Life expectancy`) <> 0
 ORDER BY Country DESC
 ; 
 
--- Which countries have made the biggest strides
+-- 3. Which countries have made the biggest strides in improving life expectancy?
 SELECT
 Country,
 MIN(`Life expectancy`),
@@ -39,7 +39,7 @@ AND MAX(`Life expectancy`) <> 0
 ORDER BY 15_Year_Change DESC
 ; 
 
--- smallest?
+-- 4. Which countries have made the smallest strides toward improving life expectancy?
 SELECT
 Country,
 MIN(`Life expectancy`),
@@ -52,7 +52,7 @@ AND MAX(`Life expectancy`) <> 0
 ORDER BY 15_Year_Change ASC
 ; 
 
--- What is the average life expectancy for each year?
+-- 5. What is the world's average life expectancy for each year?
 SELECT
 Year,
 ROUND(AVG(`Life expectancy`),2)
@@ -61,7 +61,7 @@ GROUP BY Year
 ORDER BY Year
 ;
 
--- filter out those which have life expectancies or zero
+-- 5a. Filter out those which have life expectancies or zero
 SELECT
 Year,
 ROUND(AVG(`Life expectancy`),2)
@@ -72,12 +72,7 @@ GROUP BY Year
 ORDER BY Year
 ;
 
-SELECT
-*
-FROM world_life_expectancy
-;
-
--- Does GDP correlate to life expectancy?
+-- 6. How does GDP correlate to life expectancy (ascending and descending)?
 SELECT
 Country,
 ROUND(AVG(`Life expectancy`),1) AS Life_Exp,
@@ -100,19 +95,7 @@ AND GDP > 0
 ORDER BY GDP DESC
 ;
 
--- queries can be imported into a visualization tool
-
--- Let's make categories
-
-SELECT
-SUM(CASE WHEN GDP >= 1500 THEN 1 ELSE 0 END) AS High_GDP_Count,
-AVG(CASE WHEN GDP >= 1500 THEN `Life expectancy` ELSE NULL END) AS High_GDP_Left_Exp,
-SUM(CASE WHEN GDP <= 1500 THEN 1 ELSE 0 END) AS Low_GDP_Count,
-AVG(CASE WHEN GDP <= 1500 THEN `Life expectancy` ELSE NULL END) AS Low_GDP_Left_Exp
-FROM world_life_expectancy
-;
-
--- How does the average life expectancy compare between DEVELOPING and DEVELOPED countries
+-- 7. How does the average life expectancy compare between DEVELOPING and DEVELOPED countries
 SELECT
 Status,
 ROUND(AVG(`Life expectancy`),1) AS Avg_Life_Exp
@@ -120,7 +103,7 @@ FROM world_life_expectancy
 GROUP BY Status
 ;
 
--- Is the number of DEVELOPING Countries affecting the average life expectancy calculation?
+-- 8. Is the number of DEVELOPING Countries affecting the average life expectancy calculation?
 SELECT
 Status,
 COUNT(DISTINCT Country),
@@ -129,7 +112,7 @@ FROM world_life_expectancy
 GROUP BY Status
 ;
 
--- How does average life expectancy correlate with BMI?
+-- 9. How does average life expectancy correlate with BMI?
 SELECT
 Country,
 ROUND(AVG(`Life expectancy`),1) AS Avg_Life_Exp,

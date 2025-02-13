@@ -1,1 +1,124 @@
-#
+# This project uses a subset of data that contains top 50 songs from 2021
+# data was imported into a SQL database from a .csv file
+
+-- Spotify data
+-- id, artist_name, track_name, track_id, popularity, danceability, energy, song_key, loudness, 
+-- song_mode, speechiness, acousticness, instrumentalness, liveness, valence, tempo
+-- duration_ms, time_sig
+
+SELECT
+*
+FROM Spotifydata;
+
+-- 1. How many songs are present per artist?
+SELECT
+artist_name
+,COUNT(*) AS no_of_songs
+FROM Spotifydata
+GROUP BY artist_name;
+
+-- 2. What are the songs with a duration (in milliseconds) between 100000 and 2000000 and a tempo greater that 120 bpm (beats per minute)?
+SELECT
+artist_name
+,track_name
+FROM Spotifydata
+WHERE duration_ms BETWEEN 100000 AND 200000
+AND tempo > 120;
+
+-- 3. What is the average danceability for each artist?
+SELECT
+artist_name
+,AVG(danceability) AS avg_danceability
+FROM Spotifydata
+GROUP BY artist_name
+ORDER BY avg_danceability DESC;
+
+-- 4. What is the average popularity for each artist?
+SELECT
+artist_name
+,AVG(popularity) AS avg_popularity
+FROM Spotifydata
+GROUP BY artist_name
+ORDER BY avg_popularity DESC;
+
+-- 5. What are the average energy levels are songs performed by the artists on average (in descending order)?
+SELECT
+artist_name
+,CASE
+WHEN AVG(energy) >= 0.75 THEN 'High energy'
+WHEN AVG(energy) >= 0.50 THEN 'Medium energy'
+ELSE 'Low energy'
+END AS energy_rating
+FROM Spotifydata
+GROUP BY artist_name
+ORDER BY AVG(energy) DESC;
+
+-- 6. What are the shortest, longest, and average duration songs in the top 50?   
+SELECT
+MIN(duration_ms) AS shortest_song
+,MAX(duration_ms) AS longest_song
+,AVG(duration_ms) AS average_song
+FROM Spotifydata;
+
+-- 7. What songs contain the word 'heart' in the title?
+SELECT
+artist_name
+,track_name
+FROM Spotifydata
+WHERE track_name LIKE '%heart%';
+
+-- 8. What songs do not have 'heart' in the title?
+SELECT
+artist_name
+,track_name
+FROM Spotifydata
+WHERE track_name NOT LIKE '%heart%';
+
+--9. Which artists have tracks with 'me' in the titles?
+SELECT
+artist_name
+,track_name
+FROM Spotifydata
+WHERE track_name LIKE '%me%';
+
+-- 10. What is the avgerage danceability for artists that have a popularity greater than 0.75?
+SELECT
+artist_name
+,ROUND(AVG(danceability), 2) AS avg_danceability
+FROM Spotifydata
+WHERE popularity > 0.75
+GROUP BY artist_name;
+
+-- 11. What is the average danceability per artist? 
+SELECT 
+artist_name
+,AVG(danceability) AS avg_danceability
+FROM Spotifydata
+GROUP BY artist_name;
+
+-- 12. Who are the top 10 artists based on their most popular song? 
+SELECT
+artist_name
+,MAX(popularity) AS most_popular_song
+FROM Spotifydata
+GROUP BY artist_name
+ORDER BY popularity DESC
+LIMIT 10;
+
+-- 13. What artist released the longest song? 
+SELECT
+artist_name
+,MAX(duration_ms) as longest_song
+FROM Spotifydata
+GROUP BY artist_name
+ORDER BY longest_song DESC
+LIMIT 10;
+
+-- 14. What's the average danceability for the 10 most popular songs? 
+SELECT
+track_name
+,AVG(danceability) AS avg_danceability
+FROM Spotifydata
+GROUP BY track_name
+ORDER BY avg_danceability DESC
+LIMIT 10;

@@ -1,0 +1,253 @@
+-- US Household Income Exploratory Data Analysis
+use us_income_project;
+
+SELECT
+*
+FROM us_household_income
+;
+
+SELECT
+*
+FROM us_household_income_statistics
+;
+
+-- Who has the mose water and land?
+SELECT
+State_Name,
+County,
+City,
+ALand,
+AWater
+FROM us_household_income
+;
+
+SELECT
+State_Name,
+SUM(ALand),
+SUM(AWater)
+FROM us_household_income
+GROUP BY State_Name
+ORDER BY SUM(Aland) DESC
+;
+
+SELECT
+State_Name,
+SUM(ALand),
+SUM(AWater)
+FROM us_household_income
+GROUP BY State_Name
+ORDER BY SUM(AWater) DESC
+;
+
+-- Identify Top 10 Largest States by Land
+SELECT
+State_name,
+SUM(ALand) AS total_land,
+SUM(AWater) AS total_water
+FROM us_household_income
+GROUP BY State_Name
+ORDER BY total_land DESC
+LIMIT 10
+;
+
+-- Identify Top 10 Largest States by Water
+SELECT
+State_name,
+SUM(ALand) AS total_land,
+SUM(AWater) AS total_water
+FROM us_household_income
+GROUP BY State_Name
+ORDER BY total_water DESC
+LIMIT 10
+;
+
+-- Pull tables together
+SELECT
+*
+FROM us_household_income
+;
+
+SELECT
+*
+FROM us_household_income_statistics
+;
+
+SELECT
+*
+FROM us_household_income AS ushi
+RIGHT JOIN us_household_income_statistics AS ushis
+ON ushi.id = ushis.id
+;
+
+-- Are there more records on the right side (statistics)
+SELECT
+*
+FROM us_household_income AS ushi
+RIGHT JOIN us_household_income_statistics AS ushis
+ON ushi.id = ushis.id
+WHERE ushi.id IS NULL
+;
+
+SELECT
+*
+FROM us_household_income AS ushi
+RIGHT JOIN us_household_income_statistics AS ushis
+ON ushi.id = ushis.id
+WHERE Mean <> 0
+;
+
+SELECT
+ushi.State_Name,
+County,
+Type,
+`Primary`,
+Mean,
+Median
+FROM us_household_income AS ushi
+RIGHT JOIN us_household_income_statistics AS ushis
+ON ushi.id = ushis.id
+WHERE Mean <> 0
+;
+
+-- What is average mean and median by state
+SELECT
+ushi.State_Name,
+ROUND(AVG(Mean),1) AS avg_mean,
+ROUND(AVG(Median),1) AS avg_median
+FROM us_household_income AS ushi
+INNER JOIN us_household_income_statistics AS ushis
+ON ushi.id = ushis.id
+WHERE Mean <> 0
+GROUP BY ushi.State_Name
+ORDER BY avg_mean
+;
+
+-- What are the bottom 5 states by average mean
+SELECT
+ushi.State_Name,
+ROUND(AVG(Mean),1) AS avg_mean,
+ROUND(AVG(Median),1) AS avg_median
+FROM us_household_income AS ushi
+INNER JOIN us_household_income_statistics AS ushis
+ON ushi.id = ushis.id
+WHERE Mean <> 0
+GROUP BY ushi.State_Name
+ORDER BY avg_mean ASC
+LIMIT 5
+;
+
+-- What are the top 10 states by average mean
+SELECT
+ushi.State_Name,
+ROUND(AVG(Mean),1) AS avg_mean,
+ROUND(AVG(Median),1) AS avg_median
+FROM us_household_income AS ushi
+INNER JOIN us_household_income_statistics AS ushis
+ON ushi.id = ushis.id
+WHERE Mean <> 0
+GROUP BY ushi.State_Name
+ORDER BY avg_mean DESC
+LIMIT 10
+;
+
+-- What are the top 10 states by average median
+SELECT
+ushi.State_Name,
+ROUND(AVG(Mean),1) AS avg_mean,
+ROUND(AVG(Median),1) AS avg_median
+FROM us_household_income AS ushi
+INNER JOIN us_household_income_statistics AS ushis
+ON ushi.id = ushis.id
+WHERE Mean <> 0
+GROUP BY ushi.State_Name
+ORDER BY avg_median DESC
+LIMIT 10
+;
+
+-- What are the bottom 10 states by average median
+SELECT
+ushi.State_Name,
+ROUND(AVG(Mean),1) AS avg_mean,
+ROUND(AVG(Median),1) AS avg_median
+FROM us_household_income AS ushi
+INNER JOIN us_household_income_statistics AS ushis
+ON ushi.id = ushis.id
+WHERE Mean <> 0
+GROUP BY ushi.State_Name
+ORDER BY avg_median ASC
+LIMIT 10
+;
+
+-- Top 10  by Type; count Type
+-- Average Mean
+SELECT
+Type,
+COUNT(Type) AS type_total,
+ROUND(AVG(Mean),1) AS avg_mean,
+ROUND(AVG(Median),1) AS avg_median
+FROM us_household_income AS ushi
+INNER JOIN us_household_income_statistics AS ushis
+ON ushi.id = ushis.id
+WHERE Mean <> 0
+GROUP BY Type
+ORDER BY avg_mean DESC
+LIMIT 20
+;
+
+-- Average Median
+SELECT
+Type,
+COUNT(Type) AS type_total,
+ROUND(AVG(Mean),1) AS avg_mean,
+ROUND(AVG(Median),1) AS avg_median
+FROM us_household_income AS ushi
+INNER JOIN us_household_income_statistics AS ushis
+ON ushi.id = ushis.id
+WHERE Mean <> 0
+GROUP BY Type
+ORDER BY avg_median DESC
+LIMIT 20
+;
+
+-- Which states have Type Community 
+SELECT
+*
+FROM us_household_income
+WHERE Type = 'Community'
+;
+
+-- Filter out those with lower Type counts
+SELECT
+Type,
+COUNT(Type) AS type_total,
+ROUND(AVG(Mean),1) AS avg_mean,
+ROUND(AVG(Median),1) AS avg_median
+FROM us_household_income AS ushi
+INNER JOIN us_household_income_statistics AS ushis
+ON ushi.id = ushis.id
+WHERE Mean <> 0
+GROUP BY Type
+HAVING type_total > 100
+ORDER BY avg_median DESC
+LIMIT 20
+;
+
+SELECT
+*
+FROM us_household_income AS ushi
+JOIN us_household_income_statistics AS ushis
+ON ushi.id = ushis.id
+;
+
+-- City and State with Average Mean and Average Median
+SELECT
+ushi.State_Name,
+City,
+ROUND(AVG(Mean),1) AS avg_mean,
+ROUND(AVG(Median),1) AS avg_median
+FROM us_household_income AS ushi
+JOIN us_household_income_statistics AS ushis
+ON ushi.id = ushis.id
+GROUP BY ushi.State_Name, City
+ORDER BY avg_mean DESC
+;

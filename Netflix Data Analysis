@@ -1,5 +1,6 @@
 # This project utilizes the following dataset:
 
+# Creation of tables 
 CREATE TABLE netflix_titles_info
     ("show_id" varchar(5), "type" varchar(7), "title" varchar(58), "country" varchar(74), "date_added" timestamp, "release_year" int, "rating" varchar(5), "duration" varchar(9), "listed_in" varchar(74))
 ;
@@ -60,27 +61,27 @@ VALUES
 
 # Following are the queries performed on the dataset:
 
-# 1. How many movie titles are in the database?
+-- 1. How many movie titles are in the database?
 
 SELECT
 COUNT(*) as no_of_movies
 FROM "netflix_titles_info"
 WHERE type = 'Movie';
 
-# 2. When was the most recent batch of tv shows and/or movies added to the database?
+-- 2. When was the most recent batch of tv shows and/or movies added to the database?
 
 SELECT
 MAX(DATE(date_added))
 FROM "netflix_titles_info";
 
-# 3. List all the movies and tv shows in alphabetical order.
+-- 3. List all the movies and tv shows in alphabetical order.
 
 SELECT
 title
 FROM "netflix_titles_info"
 ORDER BY title;
 
-# 4. Who was the Director for the movie The Starling?
+-- 4. Who was the Director for the movie 'The Starling'?
 
 SELECT
 people.director
@@ -89,7 +90,7 @@ LEFT JOIN "netflix_people" people
 ON titles.show_id = people.show_id
 WHERE titles.title = 'The Starling';
 
-# 5. What is the oldest movie in the database and what year was it made?
+-- 5. What is the oldest movie in the database and what year was it made?
 
 SELECT
 title,

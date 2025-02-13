@@ -1,4 +1,4 @@
-# This SQL project utilizes a database containing multiple tables with customer and order data
+# This SQL project utilizes a database containing multiple tables containing customer and order data
 
 # 1. How many orders were placed in January?
 
@@ -17,7 +17,7 @@ WHERE PRODUCT = 'iPhone'
 AND length(orderid) = 6
 AND orderid <> 'Order ID';
 
-# 3. What are the customer account numbers for all the orders that were placed in February. 
+# 3. What are the customer account numbers for all the orders that were placed in February? 
 
 SELECT DISTINCT
 customers.acctnum
